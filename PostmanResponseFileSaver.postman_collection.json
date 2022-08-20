@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "c78c70da-8ad9-4cc8-8723-c772b4489d68",
+		"name": "PostmanResponseFileSaver",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1924486"
+	},
+	"item": [
+		{
+			"name": "ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request successfull\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/plain",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:9090/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dowload Sample",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request successfull\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/download?filename=Snyk Partner Program.pdf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"download"
+					],
+					"query": [
+						{
+							"key": "filename",
+							"value": "Snyk Partner Program.pdf"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "sentinel",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "filios",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Save pdf\", function(){",
+					"    pm.response.to.have.status(200);",
+					"",
+					"    const filename = pm.info.requestName.replace(/[^a-z0-9]/gi, '-') + \".pdf\";",
+					"    pm.environment.set(\"filebase64Name\", filename);",
+					"    console.log(filename);",
+					"",
+					"    const base64Data = pm.response.dataURI();",
+					"    pm.environment.set(\"filebase64\", base64Data);",
+					"",
+					"    const postRequest = {",
+					"            url: 'http://localhost:9090/upload?filename=' + filename,",
+					"            method: 'POST',",
+					"            header: {",
+					"                'Content-Type': 'application/pdf',",
+					"                'X-Foo': 'bar'",
+					"            },",
+					"            body: {",
+					"                mode: 'text',",
+					"                raw: base64Data",
+					"            }",
+					"        };",
+					"    pm.sendRequest(postRequest, (error, response) => {",
+					"        console.log(error ? error : response.json());",
+					"    });",
+					"});"
+				]
+			}
+		}
+	]
+}

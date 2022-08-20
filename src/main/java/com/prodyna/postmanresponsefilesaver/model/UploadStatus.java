@@ -1,4 +1,4 @@
-package com.prodyna.postmanresponsefilesaver.rest;
+package com.prodyna.postmanresponsefilesaver.model;
 
 import lombok.Builder;
 import lombok.Data;
