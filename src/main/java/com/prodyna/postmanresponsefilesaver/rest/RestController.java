@@ -1,14 +1,14 @@
 package com.prodyna.postmanresponsefilesaver.rest;
 
+import com.prodyna.postmanresponsefilesaver.config.ApplicationConfigProperties;
 import com.prodyna.postmanresponsefilesaver.model.UploadStatus;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.server.WebServerException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,6 +30,10 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class RestController {
 
+
+
+    private final ApplicationConfigProperties config;
+
     @GetMapping("/ping")
     public String ping() {
         return "pong";
@@ -45,7 +49,7 @@ public class RestController {
             throw new IllegalArgumentException("Filetype not supported");
         }
 
-        File file = new File(System.getProperty("user.home") + "/Downloads/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + "_" + filename);
+        File file = new File(config.getContentDir() + FileSystems.getDefault().getSeparator() + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + "_" + filename);
 
         String base64 = body.substring(body.indexOf(",") + 2);
         byte[] decodedData = java.util.Base64.getDecoder().decode(base64);
@@ -59,14 +63,14 @@ public class RestController {
     }
 
 
-    @RequestMapping(path="/download",method= RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(path="/download", produces = MediaType.APPLICATION_PDF_VALUE)
     public  ResponseEntity<InputStreamResource> downloadDocument(
         String filename) throws IOException {
         if(!filename.endsWith(".pdf")){
             log.warn("File is not a PDF: {}", filename);
             return ResponseEntity.badRequest().build();
         }
-        File file2Upload = new File(System.getProperty("user.home") + "/Downloads/" + filename);
+        File file2Upload = new File(config.getContentDir() + FileSystems.getDefault().getSeparator()+ filename);
         if(!file2Upload.exists()){
             log.warn("File not found: {}", file2Upload.getAbsolutePath());
             return ResponseEntity.notFound().build();
