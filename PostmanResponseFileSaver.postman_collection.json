@@ -122,21 +122,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "sentinel",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "filios",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
