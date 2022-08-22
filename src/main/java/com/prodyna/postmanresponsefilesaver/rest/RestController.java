@@ -42,14 +42,14 @@ public class RestController {
 
     @PostMapping(value = "/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_PDF_VALUE)
     @SneakyThrows
-    public UploadStatus upload(@RequestParam("filename") @NonNull String filename, @RequestBody @NonNull String body) {
+    public UploadStatus upload(@RequestParam("filename") @NonNull String filename, @RequestParam(defaultValue = "false") boolean withTimestamp,  @RequestBody @NonNull String body) {
 
         if(!filename.endsWith(".pdf")){
             log.warn("File is not a PDF: {}", filename);
             throw new IllegalArgumentException("Filetype not supported");
         }
 
-        File file = new File(config.getContentDir() + FileSystems.getDefault().getSeparator() + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + "_" + filename);
+        File file = getFile(filename, withTimestamp);
 
         String base64 = body.substring(body.indexOf(",") + 2);
         byte[] decodedData = java.util.Base64.getDecoder().decode(base64);
@@ -60,6 +60,11 @@ public class RestController {
         log.info("Saved to File: {}", file.getAbsolutePath());
         return UploadStatus.builder().filename(file.getAbsolutePath()).build();
 
+    }
+
+    private File getFile(String filename, boolean withTimestamp) {
+        String timestamp = withTimestamp ? LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + "_" : "";
+        return new File(config.getContentDir() + FileSystems.getDefault().getSeparator() + timestamp + filename);
     }
 
 
@@ -81,9 +86,6 @@ public class RestController {
         headers.add("Expires", "0");
 
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file2Upload));
-
-
-
 
         return ResponseEntity.ok()
             .headers(headers)
