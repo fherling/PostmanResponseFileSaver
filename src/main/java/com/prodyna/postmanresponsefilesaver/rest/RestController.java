@@ -5,6 +5,7 @@ import com.prodyna.postmanresponsefilesaver.model.UploadStatus;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -62,9 +63,11 @@ public class RestController {
 
     }
 
-    private File getFile(String filename, boolean withTimestamp) {
+    private File getFile(final String filename, boolean withTimestamp) {
+        String name = filename.replaceAll("[^a-zA-Z0-9]", "-");
+
         String timestamp = withTimestamp ? LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) + "_" : "";
-        return new File(config.getContentDir() + FileSystems.getDefault().getSeparator() + timestamp + filename);
+        return new File(config.getContentDir() + FileSystems.getDefault().getSeparator() + timestamp + name);
     }
 
 
