@@ -122,6 +122,44 @@
 			"response": []
 		},
 		{
+			"name": "Dowload_Sample With no filename set",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request successfull\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/download?filename=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"download"
+					],
+					"query": [
+						{
+							"key": "filename",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Dowload Not available file",
 			"event": [
 				{
@@ -153,6 +191,44 @@
 						{
 							"key": "filename",
 							"value": "NotAvailable.pdf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dowload Invalid filename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Request successfull\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/download?filename=NotAvailable.txt",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"download"
+					],
+					"query": [
+						{
+							"key": "filename",
+							"value": "NotAvailable.txt"
 						}
 					]
 				}
